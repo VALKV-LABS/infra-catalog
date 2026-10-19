@@ -1,0 +1,20 @@
+#cloud-config
+package_update: true
+packages:
+  - docker
+runcmd:
+  - systemctl enable --now docker
+  - mkdir -p /data
+  - |
+    if lsblk /dev/oracleoci/oraclevdb >/dev/null 2>&1; then
+      if ! blkid /dev/oracleoci/oraclevdb; then
+        mkfs -t xfs /dev/oracleoci/oraclevdb
+      fi
+      grep -q "/data" /etc/fstab || echo "/dev/oracleoci/oraclevdb /data xfs defaults,nofail 0 2" >> /etc/fstab
+      mount -a
+    fi
+write_files:
+  - path: /etc/motd
+    content: |
+      ${node_name}
+      This instance is managed by Terraform.

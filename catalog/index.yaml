@@ -1,0 +1,136 @@
+catalog:
+  version: 1
+  items:
+    - id: aws-instances-with-lb
+      stack: stacks/aws/instances-with-lb
+      provider: aws
+      category: compute
+      summary: Public ALB with private EC2 instances, optional attached EBS volumes, and optional snapshot policy.
+      inputs:
+        - name
+        - region
+        - instance_count
+        - instance_type
+        - app_ports
+        - ssh_public_key
+        - ecr_read_only_enabled
+        - data_volume_enabled
+        - data_volume_size_gb
+        - backup_policy_enabled
+      outputs:
+        - lb_dns_name
+        - instance_ids
+        - instance_private_ips
+        - ebs_volume_ids
+        - backup_policy_id
+    - id: aws-instances-with-nlb
+      stack: stacks/aws/instances-with-nlb
+      provider: aws
+      category: compute
+      summary: Public NLB with private EC2 instances, forwarding TCP 443 to instance hosts with configurable target port and optional attached EBS volumes.
+      inputs:
+        - name
+        - region
+        - instance_count
+        - instance_type
+        - ssh_public_key
+        - ecr_read_only_enabled
+        - listener_port
+        - target_port
+        - data_volume_enabled
+        - data_volume_size_gb
+      outputs:
+        - lb_dns_name
+        - instance_ids
+        - instance_private_ips
+        - ebs_volume_ids
+        - backup_policy_id
+    - id: oci-instances-with-lb
+      stack: stacks/oci/instances-with-lb
+      provider: oci
+      category: compute
+      summary: Public OCI load balancer with private compute instances, optional block volumes, and optional backup policy assignment.
+      inputs:
+        - name
+        - region
+        - tenancy_ocid
+        - compartment_id
+        - image_id
+        - instance_count
+        - app_ports
+        - data_volume_enabled
+        - data_volume_size_gb
+        - backup_policy_name
+      outputs:
+        - load_balancer_ip_addresses
+        - instance_ids
+        - instance_private_ips
+        - block_volume_ids
+    - id: oci-instances-with-nlb
+      stack: stacks/oci/instances-with-nlb
+      provider: oci
+      category: compute
+      summary: Public OCI network load balancer with private compute instances, forwarding TCP 443 to instance hosts with configurable target port and optional block volumes.
+      inputs:
+        - name
+        - region
+        - tenancy_ocid
+        - compartment_id
+        - image_id
+        - instance_count
+        - listener_port
+        - target_port
+        - data_volume_enabled
+        - data_volume_size_gb
+      outputs:
+        - load_balancer_ip_addresses
+        - instance_ids
+        - instance_private_ips
+        - block_volume_ids
+    - id: aws-instances-with-lb-postgresql
+      stack: stacks/aws/instances-with-lb-postgresql
+      provider: aws
+      category: app-plus-database
+      summary: Public ALB with private EC2 instances plus managed RDS PostgreSQL, with configurable instance class and managed password secret.
+      inputs:
+        - name
+        - region
+        - instance_count
+        - instance_type
+        - app_ports
+        - ssh_public_key
+        - ecr_read_only_enabled
+        - postgresql_instance_class
+        - postgresql_engine_version
+        - postgresql_allocated_storage
+        - postgresql_backup_retention_period
+      outputs:
+        - lb_dns_name
+        - instance_ids
+        - postgresql_endpoint
+        - postgresql_port
+        - postgresql_db_name
+        - postgresql_master_user_secret_arn
+    - id: oci-instances-with-lb-postgresql
+      stack: stacks/oci/instances-with-lb-postgresql
+      provider: oci
+      category: app-plus-database
+      summary: Public OCI load balancer with private compute instances plus managed OCI PostgreSQL, with configurable shape, OCPU, memory, and password source.
+      inputs:
+        - name
+        - region
+        - tenancy_ocid
+        - compartment_id
+        - image_id
+        - instance_count
+        - app_ports
+        - postgresql_shape
+        - postgresql_instance_ocpu_count
+        - postgresql_instance_memory_size_in_gbs
+        - postgresql_password_type
+      outputs:
+        - load_balancer_ip_addresses
+        - instance_ids
+        - postgresql_db_system_id
+        - postgresql_endpoint_fqdn
+        - postgresql_endpoint_port

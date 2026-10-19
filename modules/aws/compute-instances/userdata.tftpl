@@ -1,0 +1,23 @@
+#!/bin/bash
+set -euxo pipefail
+
+dnf update -y
+dnf install -y docker awscli amazon-ssm-agent
+systemctl enable --now docker
+systemctl enable --now amazon-ssm-agent
+
+mkdir -p /data
+
+if lsblk /dev/nvme1n1 >/dev/null 2>&1; then
+  if ! blkid /dev/nvme1n1; then
+    mkfs -t xfs /dev/nvme1n1
+  fi
+  grep -q "/data" /etc/fstab || echo "/dev/nvme1n1 /data xfs defaults,nofail 0 2" >> /etc/fstab
+  mount -a
+fi
+
+cat >/etc/motd <<EOF
+${node_name}
+Region: ${aws_region}
+This node is managed by Terraform. Use SSM by default, SSH only for break-glass.
+EOF
