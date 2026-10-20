@@ -93,6 +93,17 @@ variable "ami_id" {
   description = "Optional explicit AMI ID."
 }
 
+variable "os_family" {
+  type        = string
+  default     = "amazon_linux"
+  description = "Operating system family of ami_id. Selects compatible instance bootstrap user data."
+
+  validation {
+    condition     = contains(["amazon_linux", "ubuntu"], var.os_family)
+    error_message = "os_family must be either amazon_linux or ubuntu."
+  }
+}
+
 variable "ssm_parameter_path_prefixes" {
   type        = list(string)
   default     = ["/valkv/"]

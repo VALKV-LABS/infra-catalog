@@ -135,6 +135,8 @@ resource "aws_security_group_rule" "instance_egress" {
 locals {
   ami_id = var.ami_id != "" ? var.ami_id : data.aws_ami.al2023_arm64.id
 
+  user_data_template = var.os_family == "ubuntu" ? "userdata_ubuntu.tftpl" : "userdata.tftpl"
+
   instance_subnets = [
     for i in range(var.node_count) : var.private_subnet_ids[i % length(var.private_subnet_ids)]
   ]
@@ -150,7 +152,7 @@ resource "aws_instance" "node" {
   vpc_security_group_ids = [aws_security_group.instance.id]
   key_name               = length(aws_key_pair.node) > 0 ? aws_key_pair.node[0].key_name : null
 
-  user_data = templatefile("${path.module}/userdata.tftpl", {
+  user_data = templatefile("${path.module}/${local.user_data_template}", {
     node_name  = "${var.name_prefix}-${count.index}"
     aws_region = var.aws_region
   })
