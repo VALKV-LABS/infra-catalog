@@ -124,6 +124,13 @@ Examples:
 
 ## Validation
 
-- Run `terraform fmt` and `terraform validate` when the toolchain is available.
+- Run `terraform fmt` and `terraform validate` when the toolchain is available. OpenTofu (`tofu fmt`, `tofu validate`) is installed locally and validates the same code.
 - If validation cannot be run, say so explicitly and note why.
 - When adding a new stack, sanity-check that every referenced module path exists and that catalog metadata matches the stack name and outputs.
+
+## Git Authorship
+
+- Every commit must be authored and committed as `joti-valkv <joti@valkv.com>`. Set it in the repository before committing:
+  `git config user.name joti-valkv && git config user.email joti@valkv.com`
+- Do not add `Co-Authored-By` or any other attribution trailers to commit messages, and do not add "Generated with" footers to pull request descriptions.
+- Create pull requests with `gh` while authenticated as `joti-valkv`.
