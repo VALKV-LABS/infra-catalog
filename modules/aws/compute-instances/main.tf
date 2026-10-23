@@ -153,8 +153,9 @@ resource "aws_instance" "node" {
   key_name               = length(aws_key_pair.node) > 0 ? aws_key_pair.node[0].key_name : null
 
   user_data = templatefile("${path.module}/${local.user_data_template}", {
-    node_name  = "${var.name_prefix}-${count.index}"
-    aws_region = var.aws_region
+    node_name       = "${var.name_prefix}-${count.index}"
+    aws_region      = var.aws_region
+    user_data_extra = var.user_data_extra
   })
 
   root_block_device {
