@@ -104,6 +104,12 @@ variable "os_family" {
   }
 }
 
+variable "user_data_extra" {
+  type        = string
+  default     = ""
+  description = "Shell commands appended to the instance user data after host initialization, e.g. to configure baked services for this tier."
+}
+
 variable "ssm_parameter_path_prefixes" {
   type        = list(string)
   default     = ["/valkv/"]

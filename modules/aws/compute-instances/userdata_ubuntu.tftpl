@@ -10,7 +10,7 @@ if lsblk /dev/nvme1n1 >/dev/null 2>&1; then
     mkfs.ext4 -F /dev/nvme1n1
   fi
   grep -q "[[:space:]]/data[[:space:]]" /etc/fstab || echo "/dev/nvme1n1 /data ext4 defaults,nofail 0 2" >> /etc/fstab
-  mount /data
+  mountpoint -q /data || mount /data
 fi
 
 cat >/etc/motd <<EOF
@@ -18,3 +18,5 @@ ${node_name}
 Region: ${aws_region}
 This node is managed by Terraform. Use SSM by default, SSH only for break-glass.
 EOF
+
+${user_data_extra}
