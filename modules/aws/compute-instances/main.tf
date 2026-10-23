@@ -239,6 +239,11 @@ resource "aws_volume_attachment" "data" {
   volume_id    = local.data_volumes[count.index].id
   instance_id  = aws_instance.node[count.index].id
   force_detach = false
+
+  # Stop the instance before detaching so replacing an instance (for example
+  # with `-replace` during an image rollout) never detaches a mounted
+  # filesystem from a running instance. The volume is kept and reattached.
+  stop_instance_before_detaching = true
 }
 
 resource "aws_iam_role_policy_attachment" "extra" {
