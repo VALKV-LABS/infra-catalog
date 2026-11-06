@@ -124,6 +124,18 @@ The provider stacks use a similar contract where possible:
 
 That makes the stacks easy to consume from Terraform, Terragrunt, or Cloudlaunch pipelines that inject environment-specific variables.
 
+## Networks Without NAT
+
+`modules/aws/network-vpc` creates NAT gateways by default. For development
+cells where the NAT gateway is the largest fixed cost, set
+`nat_gateway_enabled = false`: no NAT gateways or Elastic IPs are created, and
+the private subnets get no default route. Instances that need egress then run
+in `public_subnet_ids` with `compute-instances`' `associate_public_ip_address =
+true`. Each instance gets a public IPv4 address (billed hourly) and outbound
+traffic goes through the internet gateway; inbound traffic is still limited
+to the instance security group's rules, so do not open them to `0.0.0.0/0`
+unless the port is meant to be public.
+
 ## Best-Practice Expectations
 
 The catalog is intended to follow standard infrastructure best practices:

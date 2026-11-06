@@ -7,6 +7,8 @@ locals {
 
   public_cidrs  = [for i in range(var.az_count) : cidrsubnet(var.vpc_cidr, 8, i)]
   private_cidrs = [for i in range(var.az_count) : cidrsubnet(var.vpc_cidr, 8, i + 10)]
+
+  nat_count = var.nat_gateway_enabled ? (var.single_nat ? 1 : var.az_count) : 0
 }
 
 resource "aws_vpc" "main" {
@@ -43,13 +45,13 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_eip" "nat" {
-  count  = var.single_nat ? 1 : var.az_count
+  count  = local.nat_count
   domain = "vpc"
   tags   = merge(var.tags, { Name = "${var.name_prefix}-nat-eip-${count.index}" })
 }
 
 resource "aws_nat_gateway" "main" {
-  count         = var.single_nat ? 1 : var.az_count
+  count         = local.nat_count
   allocation_id = aws_eip.nat[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
   tags          = merge(var.tags, { Name = "${var.name_prefix}-nat-${count.index}" })
@@ -77,9 +79,13 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
   tags   = merge(var.tags, { Name = "${var.name_prefix}-private-rt-${count.index}" })
 
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = var.single_nat ? aws_nat_gateway.main[0].id : aws_nat_gateway.main[count.index].id
+  # No default route without NAT: private subnets then reach only the VPC.
+  dynamic "route" {
+    for_each = var.nat_gateway_enabled ? [1] : []
+    content {
+      cidr_block     = "0.0.0.0/0"
+      nat_gateway_id = var.single_nat ? aws_nat_gateway.main[0].id : aws_nat_gateway.main[count.index].id
+    }
   }
 }
 

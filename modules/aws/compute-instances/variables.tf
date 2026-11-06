@@ -15,7 +15,13 @@ variable "vpc_id" {
 
 variable "private_subnet_ids" {
   type        = list(string)
-  description = "Private subnet IDs used for round-robin placement."
+  description = "Subnet IDs used for round-robin placement: private subnets normally, or public subnets together with associate_public_ip_address."
+}
+
+variable "associate_public_ip_address" {
+  type        = bool
+  default     = false
+  description = "Give each instance a public IPv4 address, for instances placed in public subnets of a VPC without NAT. Inbound access is still limited to the security group rules. Changing it replaces the instances."
 }
 
 variable "lb_security_group_id" {
