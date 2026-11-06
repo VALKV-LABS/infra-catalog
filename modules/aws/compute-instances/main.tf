@@ -151,6 +151,8 @@ resource "aws_instance" "node" {
   iam_instance_profile   = aws_iam_instance_profile.node.name
   vpc_security_group_ids = [aws_security_group.instance.id]
   key_name               = length(aws_key_pair.node) > 0 ? aws_key_pair.node[0].key_name : null
+  # null keeps the subnet's default, so existing instances see no change.
+  associate_public_ip_address = var.associate_public_ip_address ? true : null
 
   user_data = templatefile("${path.module}/${local.user_data_template}", {
     node_name       = "${var.name_prefix}-${count.index}"

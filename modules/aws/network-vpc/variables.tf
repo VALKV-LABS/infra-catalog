@@ -20,10 +20,16 @@ variable "az_count" {
   }
 }
 
+variable "nat_gateway_enabled" {
+  type        = bool
+  default     = true
+  description = "Create NAT gateways for private subnet egress. When false, private subnets have no route to the internet: instances that need egress must run in the public subnets with public IPs, or reach AWS services through VPC endpoints."
+}
+
 variable "single_nat" {
   type        = bool
   default     = true
-  description = "Whether to use a single shared NAT gateway."
+  description = "Whether to use a single shared NAT gateway. Ignored when nat_gateway_enabled is false."
 }
 
 variable "tags" {

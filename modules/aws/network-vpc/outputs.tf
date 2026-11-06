@@ -27,3 +27,8 @@ output "private_route_table_ids" {
   value       = aws_route_table.private[*].id
   description = "Private subnet route table IDs — needed to add a return route when another VPC peers to this one (e.g. BaaS's VPC, see baas/terraform/modules/region-infra)."
 }
+
+output "nat_gateway_ids" {
+  value       = aws_nat_gateway.main[*].id
+  description = "NAT gateway IDs; empty when nat_gateway_enabled is false."
+}
