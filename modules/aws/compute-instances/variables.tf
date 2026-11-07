@@ -128,6 +128,17 @@ variable "ecr_read_only_enabled" {
   description = "Whether to attach AmazonEC2ContainerRegistryReadOnly so instances can pull from ECR using the instance profile."
 }
 
+variable "instance_metadata_tags_enabled" {
+  type        = bool
+  default     = false
+  description = <<-EOT
+    Expose the instance's tags through the instance metadata service
+    (http://169.254.169.254/latest/meta-data/tags/instance/<key>), so boot
+    scripts can read per-instance settings from tags. Tag keys containing "/"
+    are not exposed. Changing it updates running instances in place.
+  EOT
+}
+
 variable "tags" {
   type        = map(string)
   default     = {}

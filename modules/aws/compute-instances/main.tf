@@ -171,6 +171,9 @@ resource "aws_instance" "node" {
     http_endpoint               = "enabled"
     http_tokens                 = "required"
     http_put_response_hop_limit = 1
+    # Lets software on the instance read its own tags (for example a node
+    # class) from the metadata service. Hop limit 1 keeps containers out.
+    instance_metadata_tags = var.instance_metadata_tags_enabled ? "enabled" : "disabled"
   }
 
   tags = merge(var.tags, {
