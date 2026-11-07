@@ -136,6 +136,17 @@ traffic goes through the internet gateway; inbound traffic is still limited
 to the instance security group's rules, so do not open them to `0.0.0.0/0`
 unless the port is meant to be public.
 
+## Instance Tags in Metadata
+
+`modules/aws/compute-instances` keeps instance tags out of the instance
+metadata service by default. Set `instance_metadata_tags_enabled = true` to
+let software on the instance read them at
+`http://169.254.169.254/latest/meta-data/tags/instance/<key>`, for example a
+boot script that takes a node class from a tag instead of user data. Tag keys
+containing `/` are not exposed, so use keys like `valkvork-node-class`. The
+metadata hop limit stays 1, so containers on the instance cannot read them.
+Changing the setting updates running instances in place.
+
 ## Best-Practice Expectations
 
 The catalog is intended to follow standard infrastructure best practices:
