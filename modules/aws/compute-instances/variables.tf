@@ -158,3 +158,20 @@ variable "extra_policy_arns" {
     roles.
   EOT
 }
+
+variable "metadata_hop_limit" {
+  type        = number
+  default     = 1
+  description = <<-EOT
+    Instance metadata (IMDSv2) PUT response hop limit. 1, the default, means
+    only processes on the instance itself reach the metadata service, and so
+    its role. 2 also lets containers on a bridge network reach it, so they can
+    use the instance role (the AWS SDKs' default credentials), at the cost
+    that every container on the instance can.
+  EOT
+
+  validation {
+    condition     = contains([1, 2], var.metadata_hop_limit)
+    error_message = "metadata_hop_limit must be 1 or 2."
+  }
+}

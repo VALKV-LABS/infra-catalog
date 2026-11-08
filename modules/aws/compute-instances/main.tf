@@ -168,11 +168,13 @@ resource "aws_instance" "node" {
   }
 
   metadata_options {
+    # Hop limit 1 keeps containers out of the metadata service (and so out of
+    # the instance role); 2 lets them in, one hop through a container network.
     http_endpoint               = "enabled"
     http_tokens                 = "required"
-    http_put_response_hop_limit = 1
+    http_put_response_hop_limit = var.metadata_hop_limit
     # Lets software on the instance read its own tags (for example a node
-    # class) from the metadata service. Hop limit 1 keeps containers out.
+    # class) from the metadata service.
     instance_metadata_tags = var.instance_metadata_tags_enabled ? "enabled" : "disabled"
   }
 
